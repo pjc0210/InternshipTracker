@@ -2,144 +2,30 @@
  *  Script file for connecting the SQL database to the front end
  */
  
-// Name Space => application
-var app = app || {};
+// Name Space => front-end manager
+var fem = fem || {};
 
-it.authManager = null;
+fem.authManager = null;
  
  
 /* Main */
-it.main = function () {
-    intializeDBConnection();
-
-    //Testing code to call addCompany
-    it.executeQuery(`EXEC dbo.addCompany`
-
-    )
+fem.main = function () {
+    fem.checkForRedirect();
+    fem.init();
 };
-
-/*Classes*/
-/*Manager for authorization in the app*/
-it.AuthManager = class {
-
-    //TODO: Replace old ShelterManager code with InternshipTracker code
-
-    constructor() {
-
-        console.log("AuthManager created");
-
-        this._user = null;
-        this.email = null;
-        this.userId = null;
-
-    }
-
-    beginListening(changeListener) {
-
-        firebase.auth().onAuthStateChanged((user) => {
-
-            console.log("FIREBASE: User state changed. User: ", user);
-
-            this._user = user;
- 
-            if (user) {
-
-                console.log("Signed in as: ", user.email);
-
-                this.userId = user.uid;
-                this.email = user.email;
-
-            }
-            else {
-                console.log("Signed out");
-            }
-
-            changeListener();
-
-        });
-
-    }
-
-    signIn(email, password) {
-
-        console.log("Signing in as: ", email);
-
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        .catch((error) => {
-
-            const errorCode = error.code;
-            const errorMessage = error.message;
-
-            console.error("Existing account login error: ", errorCode, errorMessage);
-
-        })
-        .then(() => {
-            window.location.href = `/index.html${this._user.uid}`;
-        });
-
-    }
-
-    signUp(email, password, name, website, location, description, photoURL) {
-
-        console.log("Signing up as: ", email);
-
-        app.shelterListManager.add(email, name, website, location, description, photoURL);
-
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .catch((error) => {
-            console.error("Create account error: ", error);
-        });
-
-    }
-
-    signOut() {
-
-        console.log("Signing out...");
-
-        firebase.auth().signOut().catch((error) => {
-            console.error("Sign out error: ", error);
-        });
-
-    }
-
-    get isSignedIn() {
-        return !!this._user;
-    }
-
-    get uid() {
-        return this._user.uid;
-    }
-
-}
 
 /*Creates the proper Manager and Controller objects for the given
 page the application is on
 */
-it.init = function () {
+fem.init = function () {
 
     const urlParams = new URLSearchParams(window.location.search);
-    //TODO: Initialize the pages for the InternshipTracker app
-    //TODO: Delete old placeholder code from ShelterManager app
 
-    if (document.querySelector("#listPage")) {
-        new app.SideNavController();
+    if (document.querySelector("#addInternshipPage")) {
+        fem.InternshipPage = new fem.InternshipPage();
     }
 
-    if (document.querySelector("#loginPage")) {
-
-        console.log("You are on the login page");
-        app.loginPageController = new app.LoginPageController();
-
-    }
-
-    if (document.querySelector("#signupPage")) {
-
-        console.log("You are on the signup page.");
-        app.shelterListManager = new app.ShelterListManager();
-        app.signupPageController = new app.SignupPageController();
-
-    }
-
+    /*
     if (document.querySelector("#listPage")) {
 
         console.log("You are on the list page");
@@ -148,32 +34,14 @@ it.init = function () {
         app.listPageController = new app.ListPageController();
 
     }
-
-    if (document.querySelector("#detailPage")) {
-
-        console.log("You are on the detail page");
-        const petID = urlParams.get('id');
-        app.petManager = new app.PetManager(petID);
-        app.detailPageController = new app.DetailPageController();
-
-    }
-
-    if (document.querySelector("#profilePage")) {
-
-        console.log("You are on the profile page");
-        const shelterId = urlParams.get('uid')
-        app.shelterManager = new app.ShelterManager(shelterId);
-        app.profilePageController = new app.ProfilePageController();
-
-    }
-
+        */
 };
 
 /*Checks for certain conditions that must be satisfied on some pages. 
 For example, to be on the main page, the user must be signed in, so this function
 checks that the user is correctly signed in.
 */
-it.checkForRedirect = function () {
+fem.checkForRedirect = function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
@@ -208,5 +76,25 @@ function htmlToElement(html) {
     return template.content.firstChild;
 
 }
+
+/*Classes*/
+fem.InternshipPage = class {
+    constructor() {
+
+        console.log("InternshipPage javascript created");
+
+        document.querySelector("#submitCreateInternship").onclick = () => {
+
+            const email = document.getElementById("signupEmailInput").value;
+            const password = document.getElementById("passwordInput").value;
+            const name = document.getElementById("shelterNameInput").value;
+            const location = document.getElementById("shelterLocationInput").value;
+            const description = document.getElementById("shelterDescriptionInput").value;
+            const website = document.getElementById("shelterLinkInput").value;
+
+            uploadShelterImage(email, password, name, website, location, description);
+        }
+    }
+}
  
-it.main();
+fem.main();

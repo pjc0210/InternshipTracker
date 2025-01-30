@@ -27,7 +27,8 @@ connect()
 //     res.status(500).json({ error: 'An error occurred while inserting the trip' });
 //   }
 // });
- 
+
+/*
 app.post("/new-trip/api/trips", async (req, res) => {
     console.log("Request body received:", req.body); // Log request body
     const leaderId = 1;
@@ -81,6 +82,7 @@ app.post("/new-trip/api/trips", async (req, res) => {
             .json({ error: "An error occurred while inserting the trip" });
     }
 });
+*/
  
 app.use("/", express.static("../"));
  
