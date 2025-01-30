@@ -10,6 +10,22 @@ it.DB_NAME = 'InternshipTracker_S3G6';
 it.DRIVER = 'ODBC Driver 17 for SQL Server';
 it.DB_MANAGER_NAME = 'InternshipManager';
 it.DB_MANAGER_PASS = 'password';
+
+it.authManager = null;
+
+/*Express hosting*/
+const express = require("express");
+const app = express();
+const port = 3000;
+
+app.get("/", function (req, res) {
+  res.send("Hello World!");
+});
+
+app.listen(port, function () {
+  console.log(`Example app listening on port ${port}!`);
+});
+
  
 it.intializeDBConnection = function () {
  
@@ -19,8 +35,8 @@ it.intializeDBConnection = function () {
         server: it.SERVER_NAME,
         database: it.DB_NAME,
         driver: it.DRIVER,
-        user: it.DB_MANAGER_NAME, //Replace with our user
-        password: it.DB_MANAGER_PASS, //Replace with our user password
+        user: it.DB_MANAGER_NAME, 
+        password: it.DB_MANAGER_PASS, 
         options: {
              trustServerCertificate: true
         }
@@ -38,6 +54,100 @@ it.main = function () {
 
     )
 };
+
+/*Classes*/
+/*Manager for authorization in the app*/
+it.AuthManager = class {
+
+    //TODO: Replace old ShelterManager code with InternshipTracker code
+
+    constructor() {
+
+        console.log("AuthManager created");
+
+        this._user = null;
+        this.email = null;
+        this.userId = null;
+
+    }
+
+    beginListening(changeListener) {
+
+        firebase.auth().onAuthStateChanged((user) => {
+
+            console.log("FIREBASE: User state changed. User: ", user);
+
+            this._user = user;
+ 
+            if (user) {
+
+                console.log("Signed in as: ", user.email);
+
+                this.userId = user.uid;
+                this.email = user.email;
+
+            }
+            else {
+                console.log("Signed out");
+            }
+
+            changeListener();
+
+        });
+
+    }
+
+    signIn(email, password) {
+
+        console.log("Signing in as: ", email);
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch((error) => {
+
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            console.error("Existing account login error: ", errorCode, errorMessage);
+
+        })
+        .then(() => {
+            window.location.href = `/index.html${this._user.uid}`;
+        });
+
+    }
+
+    signUp(email, password, name, website, location, description, photoURL) {
+
+        console.log("Signing up as: ", email);
+
+        app.shelterListManager.add(email, name, website, location, description, photoURL);
+
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .catch((error) => {
+            console.error("Create account error: ", error);
+        });
+
+    }
+
+    signOut() {
+
+        console.log("Signing out...");
+
+        firebase.auth().signOut().catch((error) => {
+            console.error("Sign out error: ", error);
+        });
+
+    }
+
+    get isSignedIn() {
+        return !!this._user;
+    }
+
+    get uid() {
+        return this._user.uid;
+    }
+
+}
 
 /*Creates the proper Manager and Controller objects for the given
 page the application is on
