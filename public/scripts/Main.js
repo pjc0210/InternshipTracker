@@ -1,13 +1,13 @@
 /**
  *  Script file for connecting the SQL database to the front end
  */
- 
+
 // Name Space => front-end manager
 var fem = fem || {};
 
 fem.authManager = null;
- 
- 
+
+
 /* Main */
 fem.main = function () {
     fem.checkForRedirect();
@@ -54,7 +54,7 @@ fem.checkForRedirect = function () {
     }
 
     // if signed in and on login or signup pages, redirect to list page
-    if ((app.fbAuthManager.isSignedIn && document.querySelector("#loginPage")) || 
+    if ((app.fbAuthManager.isSignedIn && document.querySelector("#loginPage")) ||
         (app.fbAuthManager.isSignedIn && document.querySelector("#signupPage"))) {
         window.location.href = `/index.html?uid=${app.fbAuthManager.userId}`;
     }
@@ -83,18 +83,57 @@ fem.InternshipPage = class {
 
         console.log("InternshipPage javascript created");
 
-        document.querySelector("#submitCreateInternship").onclick = () => {
+        document.querySelector("#create").onclick = async () => {
 
-            const email = document.getElementById("signupEmailInput").value;
-            const password = document.getElementById("passwordInput").value;
-            const name = document.getElementById("shelterNameInput").value;
-            const location = document.getElementById("shelterLocationInput").value;
-            const description = document.getElementById("shelterDescriptionInput").value;
-            const website = document.getElementById("shelterLinkInput").value;
+            const title = document.getElementById("title").value;
+            const indsutry = document.getElementById("industry").value;
+            const setting = document.getElementById("setting").value;
+            const url = document.getElementById("url").value;
+            const duration = document.getElementById("duration").value;
+            const jobType = document.getElementById("jobType").value;
+            const companyName = document.getElementById("companyName").value;
+            const country = document.getElementById("country").value;
+            const city = document.getElementById("city").value;
+            const state = document.getElementById("state").value;
+            const deadline = document.getElementById("deadline").value;
+            const status = document.getElementById("status").value;
+            const notes = document.getElementById("notes").value;
 
-            uploadShelterImage(email, password, name, website, location, description);
+            const companyID = 3000;
+
+            //Parse the request body
+            const requestBody = {
+                companyID,
+                title,
+                industry,
+                setting,
+                url,
+                duration,
+                jobType,
+                deadline,
+            };
+
+            //Send the fetch request
+            try {
+                const response = await fetch("/new-internship/api/internships", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    console.log("Internship added successfully: ", result);
+                } else {
+                    console.error("Error adding internship: ", result.error);
+                }
+            } catch (error) {
+                console.error("Error sending request: ", error);
+            }
         }
     }
 }
- 
+
 fem.main();
