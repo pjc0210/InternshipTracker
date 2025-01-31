@@ -13,6 +13,7 @@ it.DRIVER = 'ODBC Driver 17 for SQL Server';
 it.DB_MANAGER_NAME = 'InternshipManager';
 it.DB_MANAGER_PASS = 'password';
 
+/*Database configuration*/
 const config = {
     server: it.SERVER_NAME,
     database: it.DB_NAME,

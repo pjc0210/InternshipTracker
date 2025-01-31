@@ -6,6 +6,7 @@
 var fem = fem || {};
 
 fem.authManager = null;
+fem.internshipPage = null;
 
 
 /* Main */
@@ -22,7 +23,7 @@ fem.init = function () {
     const urlParams = new URLSearchParams(window.location.search);
 
     if (document.querySelector("#addInternshipPage")) {
-        fem.InternshipPage = new fem.InternshipPage();
+        fem.internshipPage = new fem.InternshipPage();
     }
 
     /*
@@ -49,15 +50,15 @@ fem.checkForRedirect = function () {
     //TODO: Don't use Firebase for auth, use Express for hosting
     //TODO: Change redirects from old SheterManager redirects to InternshipTracker redirects
 
-    if (!uid && app.fbAuthManager.isSignedIn && document.querySelector("#listPage")) {
-        window.location.href = `/index.html?uid=${app.fbAuthManager.userId}`;
-    }
+    // if (!uid && app.fbAuthManager.isSignedIn && document.querySelector("#listPage")) {
+    //     window.location.href = `/index.html?uid=${app.fbAuthManager.userId}`;
+    // }
 
-    // if signed in and on login or signup pages, redirect to list page
-    if ((app.fbAuthManager.isSignedIn && document.querySelector("#loginPage")) ||
-        (app.fbAuthManager.isSignedIn && document.querySelector("#signupPage"))) {
-        window.location.href = `/index.html?uid=${app.fbAuthManager.userId}`;
-    }
+    // // if signed in and on login or signup pages, redirect to list page
+    // if ((app.fbAuthManager.isSignedIn && document.querySelector("#loginPage")) ||
+    //     (app.fbAuthManager.isSignedIn && document.querySelector("#signupPage"))) {
+    //     window.location.href = `/index.html?uid=${app.fbAuthManager.userId}`;
+    // }
 
 };
 
@@ -85,8 +86,10 @@ fem.InternshipPage = class {
 
         document.querySelector("#create").onclick = async () => {
 
+            console.log("Create button clicked!");
+
             const title = document.getElementById("title").value;
-            const indsutry = document.getElementById("industry").value;
+            const industry = document.getElementById("industry").value;
             const setting = document.getElementById("setting").value;
             const url = document.getElementById("url").value;
             const duration = document.getElementById("duration").value;

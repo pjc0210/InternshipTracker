@@ -1,13 +1,8 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const {
-    connect
-} = require("./db-connection.js");
-const {
-    executeQuery
-} = require("./db-connection.js");
-// const tripRoute = require("./routes/insertTripRoute");
+const { connect } = require("./db-connection.js");
+const { executeQuery } = require("./db-connection.js");
 const path = require("path");
 
 app.use(bodyParser.json());
@@ -21,18 +16,10 @@ connect()
         console.log(error);
     });
 
-// app.post('/api', async (req, res) => {
-//   try {
-//   console.log('Request body received:', req.body); // Log request body
-//     res.status(200).json({ message: 'Trip added successfully', result });
 
-//   } catch (error) {
-//     console.error('Error inserting trip:', error);
-//     res.status(500).json({ error: 'An error occurred while inserting the trip' });
-//   }
-// });
-
-
+/* Runs addInternship in the database by sending a POST request
+to the server
+*/
 app.post("/new-internship/api/internships", async (req, res) => {
     console.log("Request body received:", req.body); // Log request body
 
@@ -96,6 +83,7 @@ app.post("/new-internship/api/internships", async (req, res) => {
 });
 
 
+/*HOSTING INFORMATION */
 app.use("/", express.static("../"));
 
 const PORT = 5000;
