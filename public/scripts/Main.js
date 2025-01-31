@@ -78,6 +78,21 @@ function htmlToElement(html) {
 
 }
 
+/*Converts a URL to a consistent format
+    This function should be used whenever we are trying to GET something based on the URL,
+    POST statements don't have to bother with normalizing the URL
+*/
+function normalizeUrl(url) {
+    url = url.toLowerCase().replace(/^https?:\/\//, ''); // Remove http/https
+
+    // Only remove trailing slash if there's no path (i.e., no `/` after domain)
+    if (url.includes('/') && !url.endsWith('/')) {
+        return url;
+    }
+
+    return url.replace(/\/$/, ''); // Remove trailing slash only if it's at the end
+};
+
 /*Classes*/
 fem.InternshipPage = class {
     constructor() {
@@ -87,7 +102,7 @@ fem.InternshipPage = class {
         document.addEventListener("DOMContentLoaded", async () => {
             try {
                 //Fetch the internships from the server
-                const response = await fetch("/new-internship/api/internships");
+                const response = await fetch("/api/get-internships");
                 const data = await response.json();
 
                 console.log("Received API Data:", data); //Debugging log
@@ -160,6 +175,7 @@ fem.InternshipPage = class {
 
             console.log("Create button clicked!");
 
+            //Collect the form data
             const title = document.getElementById("title").value;
             const industry = document.getElementById("industry").value;
             const setting = document.getElementById("setting").value;
@@ -167,6 +183,7 @@ fem.InternshipPage = class {
             const duration = document.getElementById("duration").value;
             const jobType = document.getElementById("jobType").value;
             const companyName = document.getElementById("companyName").value;
+            const companyURL = document.getElementById("companyURL").value;
             const country = document.getElementById("country").value;
             const city = document.getElementById("city").value;
             const state = document.getElementById("state").value;
@@ -174,40 +191,114 @@ fem.InternshipPage = class {
             const status = document.getElementById("status").value;
             const notes = document.getElementById("notes").value;
 
-            const companyID = 3000;
-
-            //Parse the request body
-            const requestBody = {
-                companyID,
-                title,
-                industry,
-                setting,
-                url,
-                duration,
-                jobType,
-                deadline,
-            };
-
-            //Send the fetch request
             try {
-                const response = await fetch("/new-internship/api/internships", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(requestBody),
-                });
+                //Check if the company inputted already exists
+                let companyID = await fem.getCompanyID(companyName, companyURL);
 
-                const result = await response.json();
-                if (response.ok) {
-                    console.log("Internship added successfully: ", result);
-                } else {
-                    console.error("Error adding internship: ", result.error);
+                if(!companyID) {
+                    //Create the company if it didn't exist
+                    console.log("Company does not exist. Creating new company...");
+                    companyID = await fem.createCompany(companyName, companyURL, city, state, country);
                 }
-            } catch (error) {
-                console.error("Error sending request: ", error);
+                if(!companyID) {
+                    //Make sure it exists now
+                    console.error("Failed to retreive or create company.");
+                    return;
+                }
+
+                //Create the internship
+                await fem.createInternship(companyID, title, industry, setting, url, duration, jobType, deadline);
+
+            } catch(error) {
+                console.error("Error in process: ", error);
             }
         }
+    }
+}
+
+/*API Calls*/
+//Gets a companyID based on its natural key
+fem.getCompanyID = async function(name, website){
+    try {
+        //Normalize the Url to match the format being passed into the database
+        website = normalizeUrl(website);
+        const response = await fetch(`/api/get-company?name=${encodeURIComponent(name)}&website=${encodeURIComponent(website)}`);
+
+        if(response.ok){
+            const data = await response.json();
+            //Return companyID if found
+            return data.ID || null;
+        }
+    } catch(error) {
+        console.error("Error checking company existence: ", error);
+    }
+    return null;
+}
+
+//Creates an internship
+fem.createInternship = async function(companyID, title, industry, setting, url, duration, jobType, deadline) {
+    //Parse the request body
+    const requestBody = {
+        companyID,
+        title,
+        industry,
+        setting,
+        url,
+        duration,
+        jobType,
+        deadline,
+    };
+
+    //Send the fetch request
+    try {
+        const response = await fetch("/api/add-internship", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            console.log("Internship added successfully: ", result);
+        } else {
+            console.error("Error adding internship: ", result.error);
+        }
+    } catch (error) {
+        console.error("Error sending request: ", error);
+    }
+}
+
+//Creates a Company
+fem.createCompany = async function(Name, Website, city, state, country) {
+    const HeadquartersLocation = `${city}, ${state} ${country}`;
+    //Parse the request body
+    const requestBody = {
+        Name,
+        HeadquartersLocation,
+        Website
+    };
+
+    //Send the fetch request
+    try {
+        const response = await fetch("/api/add-company", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            console.log("Company added successfully: ", result);
+            return result.companyID;
+        } else {
+            console.error("Error adding company: ", result.error);
+        }
+    } catch (error) {
+        console.error("Error sending request: ", error);
     }
 }
 
