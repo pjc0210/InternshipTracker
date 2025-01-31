@@ -16,10 +16,25 @@ connect()
         console.log(error);
     });
 
+/*GET Requests*/
+app.get("/new-internship/api/internships", async (req, res) => {
+    console.log("Request body received:", req.body); // Log request body
 
-/* Runs addInternship in the database by sending a POST request
-to the server
-*/
+    try {
+        //Not using a stored procedure, simply running a SELECT
+        const result = await executeQuery("SELECT * FROM Internship", [], [], false);
+
+        res.status(200).json(result.recordset); // Return internships
+    } catch (error) {
+        console.error("Error fetching internships:", error);
+        res.status(500).json({ error: "Failed to retrieve internships" });
+    }
+});
+
+
+/*POST Requests*/
+
+//addInternship
 app.post("/new-internship/api/internships", async (req, res) => {
     console.log("Request body received:", req.body); // Log request body
 

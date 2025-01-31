@@ -84,6 +84,78 @@ fem.InternshipPage = class {
 
         console.log("InternshipPage javascript created");
 
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                //Fetch the internships from the server
+                const response = await fetch("/new-internship/api/internships");
+                const data = await response.json();
+
+                console.log("Received API Data:", data); //Debugging log
+
+                //Check if response is valid
+                if(!response.ok){
+                    console.error("Failed to fetch internships: ", data.error);
+                    return;
+                }
+
+                //Select the table container
+                const tableContainer = document.getElementById("internshipTable");
+                if(!tableContainer){
+                    console.error("Table element with ID 'internshipTable' not found.");
+                    return;
+                }
+
+                //Build the table
+                const table = htmlToElement(`
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Company</th>
+                                <th>Industry</th>
+                                <th>Setting</th>
+                                <th>Website URL</th>
+                                <th>Duration</th>
+                                <th>Job Type</th>
+                                <th>Deadline</th>
+                            </tr>
+                        </thread>
+                        <tbody id="internshipTableBody"></tbody>
+                    </table>
+                `);
+
+                //Append the table to the container
+                tableContainer.innerHTML = "";
+                tableContainer.appendChild(table);
+
+                //Select tbody for row insertion
+                const tbody = document.getElementById("internshipTableBody");
+
+                //Loop through the internships and append rows
+                data.forEach(internship => {
+                    console.log("Processing internship:", internship); // Debugging log
+                    const row = htmlToElement(`
+                        <tr>
+                            <td>${internship.ID ?? "N/A"}</td>
+                            <td>${internship.Title ?? "N/A"}</td>
+                            <td>${internship.CompanyID ?? "N/A"}</td>
+                            <td>${internship.Industry ?? "N/A"}</td>
+                            <td>${internship.Setting ?? "N/A"}</td>
+                            <td>${internship.URL ?? "N/A"}</td>
+                            <td>${internship.Duration ?? "N/A"}</td>
+                            <td>${internship.JobType ?? "N/A"}</td>
+                            <td>${internship.Deadline ?? "N/A"}</td>
+                    `);
+                    tbody.appendChild(row);
+                });
+            } catch(error) {
+                console.error("Error fetching internships: ", error);
+                document.getElementById("internshipTable").innerHTML = `<p style="color: red;">Failed to load internships.</p>`;
+            }
+        });
+
+        //Create button functionality
         document.querySelector("#create").onclick = async () => {
 
             console.log("Create button clicked!");
