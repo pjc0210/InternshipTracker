@@ -1,5 +1,5 @@
 .hidden {
-    /* display: none; */
+    display: none;
 }
 
 body {
@@ -40,12 +40,21 @@ h2 {
     align-items: center;
 }
 
+.signUpCreatedDiv {
+    display:flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .createdDiv > h1 {
     color: #77B6EA;
     text-align: left;
     align-items: default;
     font-size: 10vh;
+    margin-bottom: 3px;
 }
 
 .createdDiv > input {
@@ -78,7 +87,7 @@ h2 {
 }
 
 .forButs {
-    margin-top: 40px;
+    margin-top: 30px;
     display: flex;
     direction: row;
     justify-content: center;
@@ -96,7 +105,7 @@ h2 {
 
 .errorMsg {
     color: #FE654F;
-    margin-top: 20px;
-    margin-bottom: -20px;
+    margin-top: 15px;
+    margin-bottom: -15px;
     font-size: 15px;
 }

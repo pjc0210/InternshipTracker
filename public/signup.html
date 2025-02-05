@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Internship Tracker - Sign Up</title>
+
+    <link rel="stylesheet" href="styles/signup.css">
+</head>
+
+<body>
+    <h2>Internship Tracker</h2>
+    <div id="root">
+        <div>
+            <div class="createdDiv">
+                <h1>sign up</h1>
+                <input class="textBoxes" type="textbox" id="logInEmail" name="logInEmail" placeholder="Email">
+                <input class="textboxes" type="textbox" id="logInUsername" name="logInUsername" placeholder="Username">
+                <input class="textboxes" type="password" id="logInPassword" name="logInPassword" placeholder="Password">
+            </div>
+            <div class="forErrors">
+                <!-- TODO: JS CHECK ERRORS AND SHOW/HIDE ERROR MSG -->
+                <p id="errorEmail" class="errorMsg hidden">The email field must not be empty.</p>
+                <p id="errorUsername" class="errorMsg hidden">The username already exists.</p>
+                <p id="errorPassword" class="errorMsg hidden">The password field must not be empty.</p>
+            </div>
+            <div class="forButs">
+                <input class="buts" type="submit" id="logIn" value="Back">
+                <input class="buts" type="submit" id="signUp" value="Sign Up">
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+</html>
