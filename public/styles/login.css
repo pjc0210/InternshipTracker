@@ -1,0 +1,101 @@
+.hidden {
+    display: none;
+}
+
+body {
+    background-color: #E8EEF2;
+    display: flex;
+    justify-content: center; /* Align horizontal */
+    align-items: center; 
+    font-family: "Inter";
+}
+
+#root {
+    align-items: center;
+    margin:auto;
+    justify-content: center;
+    position: absolute;
+    top:50%;
+    bottom:50%;
+    width:50vw;
+    height: 65vh;
+    /* background-color: rgb(196,226,221); */
+    /* border:2px solid gray; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+h2 {
+    color: #77B6EA;
+    font-size: 35px;
+    position: fixed;
+    top: -10px;
+    left: 20px;
+}
+
+.createdDiv {
+    display:flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.createdDiv > h1 {
+    color: #77B6EA;
+    text-align: left;
+    align-items: default;
+    font-size: 10vh;
+}
+
+.createdDiv > input {
+    width: 20vw;
+    font-size: larger;
+    padding: 10px;
+}
+
+.textboxes {
+    text-align: left;
+    width:200px;
+    height:20px;
+}
+
+.labels {
+    display: inline
+}
+
+.buts {
+    width:80px;
+    background-color: #77B6EA;
+    border: 1px solid black;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    width: 12.5vw;
+    padding: 10px;
+}
+
+.forButs {
+    margin-top: 40px;
+    display: flex;
+    direction: row;
+    justify-content: center;
+    gap:25px
+}
+
+.forErrors {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:2px;
+    margin:5px;
+}
+
+.errorMsg {
+    color: #FE654F;
+    margin-top: 20px;
+    margin-bottom: -20px;
+    font-size: 15px;
+}
